@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<h2>Current Status</h2>
+
+<!-- current status not yet implemented
+<section>
+    <article>
+        <header><strong>Backend Health</strong></header>
+        <div class="grid">
+            <div>
+                <small>Version</small><br>
+                <strong>{{ status.Version }}</strong>
+            </div>
+            <div>
+                <small>Encoder Status</small><br>
+                <mark class="{% if status.State == 'Running' %}status-recording{% else %}status-default{% endif %}">
+                    {{ status.State|default:"Online" }}
+                </mark>
+            </div>
+            <div>
+                <small>Local Time</small><br>
+                <strong>{{ status.CurrentTime|slice:":16" }}</strong>
+            </div>
+        </div>
+    </article>
+</section>
+-->
+
+<div class="grid">
+
+    <aside>
+        <article>
+            <header>⏰ Upcoming Recordings</header>
+            {% for prog in upcoming %}
+                <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 0.5rem;">
+                    <strong>{{ prog.Title }}</strong> <br/>
+                    <small>{{ prog.SubTitle|default:"" }}<br/>
+                     {{ prog.dt_start|naturalday }} {{ prog.dt_start|date:"g:i A" }}<br/>
+                    {{ prog.dt_start|naturaltime }}</small>
+                </div>
+            {% empty %}
+                <p>No upcoming recordings.</p>
+            {% endfor %}
+            <footer><a href="{% url 'upcoming' %}" class="secondary">View all →</a></footer>
+        </article>
+    </aside>
+
+    <aside>
+        <article>
+            <header>🎥 Last 3 Recordings</header>
+            {% for prog in recorded %}
+                <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 0.5rem;">
+                    <strong>{{ prog.Title }}</strong> <br/>
+                    <small>{{ prog.SubTitle|default:"" }}<br/>
+                     {{ prog.dt_start|naturalday }} {{ prog.dt_start|date:"g:i A" }}</small>
+                </div>
+            {% empty %}
+                <p>No history found.</p>
+            {% endfor %}
+            {# doesn't exist yet #}
+            {# <footer><a href="#" class="secondary">View All Recordings</a></footer> #}
+        </article>
+    </aside>
+
+</div>
+{% endblock %}
