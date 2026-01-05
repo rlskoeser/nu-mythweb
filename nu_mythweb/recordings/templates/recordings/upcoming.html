@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}Upcoming - MythTV{% endblock %}
 
@@ -15,27 +16,54 @@
         </article>
     {% else %}
         <figure>
-            <table class="striped">
-                <thead>
+            <table class="striped upcoming-recordings">
+                <thead class="col-headers">
                     <tr>
-                        <th scope="col">Date & Time</th>
+                        <th scope="col">Time</th>
                         <th scope="col">Program</th>
                         <th scope="col">Channel</th>
+                        <th scope="col">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for prog in programs %}
-                    <tr>
-                        <td>
-                            <strong>{{ prog.dt_start|date:"D, M j" }}</strong><br>
+                    {# display each unique date once #}
+                    {% ifchanged prog.dt_start.date %}
+                    {# Close previous body if not first, then open new one for a new day #}
+                    {% if not forloop.first %}</tbody>{% endif %}
+                    <thead>
+                    <tr class="date-header">
+                        <td colspan="4">
+                            {{ prog.dt_start|naturalday:"l, F j" }}
+                        </td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% endifchanged %}
+
+                    <tr class="recording">
+                        <td class="time">
                             {{ prog.dt_start|date:"g:i A" }}
                         </td>
-                        <td>
+                        <td class="program-info">
                             <strong>{{ prog.Title }}</strong><br>
                             <small>{{ prog.SubTitle|default:"" }}</small>
+
+                            {% if prog.Description %}
+                            <aside style="color: var(--pico-secondary); margin-top: 0.5rem; margin-bottom: 0; max-width: 600px;">
+                                <small>
+                                    {{ prog.Description }}
+                                </small>
+                            </aside>
+                            {% endif %}
                         </td>
-                        <td>
+                        <td class="channel">
                             <mark>{{ prog.Channel.CallSign }}</mark>
+                        </td>
+                        <td class="status">
+                            <mark class="status-badge {{ prog.status_code_class }}">
+                                 {{ prog.status_display }}
+                            </mark>
                         </td>
                     </tr>
                     {% empty %}

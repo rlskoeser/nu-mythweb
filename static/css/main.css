@@ -1,0 +1,83 @@
+/* Typography & Layout for the whole site */
+:root {
+    --nav-height: 80px;
+}
+
+/* make date header sticky when scrolling */
+.date-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.date-header td {
+    background-color: var(--pico-secondary-background);
+    color: var(--pico-primary);
+    font-weight: 700;
+}
+
+/* recording status */
+.status-badge {
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.status-recording { background-color: var(--pico-ins-color); }
+.status-conflict  { background-color: var(--pico-del-color); }
+.status-default   {
+    background-color: var(--pico-secondary-background);
+    color: var(--pico-color);
+}
+
+table.upcoming-recordings td {
+    vertical-align: top;
+}
+
+/* for mobile, display upcoming recordings as cards */
+@media (max-width: 600px) {
+    /* Hide column labels, NOT the date header */
+    thead.col-headers {
+        display: none;
+    }
+    /* Transform the row into a Grid Card */
+    tr.recording {
+        display: grid !important;
+        grid-template-areas:
+            "time    time"
+            "title   title"
+            "channel status";
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem;
+
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        border: 1px solid var(--pico-muted-border-color);
+        border-radius: 12px;
+        background: var(--pico-card-background-color) !important;
+    }
+    tr.recording td {
+        border: none;
+        padding: 0;
+        background-color: transparent !important; /* override striping */
+    }
+
+    /* position elements using grid areas */
+    td.time {
+        grid-area: time;
+    }
+
+    td.channel {
+        grid-area: channel;
+        text-align: right;
+    }
+    td.status {
+        grid-area: status;
+        text-align: right;
+    }
+
+    td.program-info {
+        grid-area: title;
+    }
+}
