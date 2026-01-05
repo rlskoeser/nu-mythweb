@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Upcoming - MythTV{% endblock %}
+
+{% block content %}
+    <hgroup>
+        <h2>Upcoming Recordings</h2>
+        <p>Currently scheduled recordings.</p>
+    </hgroup>
+
+    {% if error %}
+        <article style="border-color: var(--pico-form-element-invalid-border-color);">
+            <header>Connection Error</header>
+            {{ error }}
+        </article>
+    {% else %}
+        <figure>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Date & Time</th>
+                        <th scope="col">Program</th>
+                        <th scope="col">Channel</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prog in programs %}
+                    <tr>
+                        <td>
+                            <strong>{{ prog.dt_start|date:"D, M j" }}</strong><br>
+                            {{ prog.dt_start|date:"g:i A" }}
+                        </td>
+                        <td>
+                            <strong>{{ prog.Title }}</strong><br>
+                            <small>{{ prog.SubTitle|default:"" }}</small>
+                        </td>
+                        <td>
+                            <mark>{{ prog.Channel.CallSign }}</mark>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No recordings found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </figure>
+    {% endif %}
+{% endblock %}
