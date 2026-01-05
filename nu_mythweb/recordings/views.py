@@ -10,11 +10,25 @@ MYTHTV_PORT = 6744
 
 
 def split_camel_case(text):
-    """Turns 'WillRecord' into 'Will Record'"""
+    """Turn status like 'WillRecord' into 'Will Record'"""
     if not text:
         return text
     # This regex finds the boundary between lowercase and uppercase
     return re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
+
+
+def category_slug(text):
+    text = text.lower()
+
+    if "sport" in text:
+        # sports, playoff sports
+        slug = "sports"
+    else:
+        # by default, use lowercase category as slug
+        # animated, sitcom, animals, movie
+        slug = text
+
+    return slug
 
 
 def get_status_class(code):
@@ -52,6 +66,7 @@ def upcoming_list(request):
             prog["status_code_class"] = get_status_class(
                 int(recording_data.get("Status", 99))
             )
+            prog["category_code"] = category_slug(prog["Category"])
     except Exception as e:
         context["error"] = f"Could not connect to MythTV: {e}"
 

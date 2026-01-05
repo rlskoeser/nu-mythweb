@@ -31,9 +31,36 @@
     color: var(--pico-color);
 }
 
+ td.time {
+     white-space: nowrap;
+ }
+
 table.upcoming-recordings td {
     vertical-align: top;
 }
+
+tr.recording {
+    position: relative;
+}
+/*
+tr.recording::after {
+    font-size: 1.2rem;
+    display: inline-block;
+    padding: 5px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+/* Map category codes to Emojis using attribute selectors */
+/*
+tr.recording[data-category="movie"]::after { content: "🎬"; }
+tr.recording[data-category="sports"]::after { content: "🏈"; }
+tr.recording[data-category="news"]::after  { content: "📰"; }
+tr.recording[data-category="animals"]::after  { content: "🦁"; }
+tr.recording[data-category="sitcom"]::after { content: "📺"; } */
+/*tr.recording[data-category="animated"]::before  { content: ""; }*/
+
 
 /* for mobile, display upcoming recordings as cards */
 @media (max-width: 600px) {

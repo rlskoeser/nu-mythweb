@@ -41,11 +41,11 @@
                     <tbody>
                     {% endifchanged %}
 
-                    <tr class="recording">
+                    <tr class="recording" data-category="{{ prog.category_code }}">
                         <td class="time">
                             {{ prog.dt_start|date:"g:i A" }}
                         </td>
-                        <td class="program-info">
+                        <td class="program-info" >
                             <strong>{{ prog.Title }}</strong><br>
                             <small>{{ prog.SubTitle|default:"" }}</small>
 
