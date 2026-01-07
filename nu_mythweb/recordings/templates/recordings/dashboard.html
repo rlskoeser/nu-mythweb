@@ -4,29 +4,10 @@
 {% block content %}
 <h2>Current Status</h2>
 
-<!-- current status not yet implemented
-<section>
-    <article>
-        <header><strong>Backend Health</strong></header>
-        <div class="grid">
-            <div>
-                <small>Version</small><br>
-                <strong>{{ status.Version }}</strong>
-            </div>
-            <div>
-                <small>Encoder Status</small><br>
-                <mark class="{% if status.State == 'Running' %}status-recording{% else %}status-default{% endif %}">
-                    {{ status.State|default:"Online" }}
-                </mark>
-            </div>
-            <div>
-                <small>Local Time</small><br>
-                <strong>{{ status.CurrentTime|slice:":16" }}</strong>
-            </div>
-        </div>
-    </article>
-</section>
--->
+{% if error %}
+     <p class="error">⚠️ {{ error }}</p>
+{% endif %}
+
 
 <div class="grid">
 
@@ -64,5 +45,57 @@
         </article>
     </aside>
 
+</div>
+
+<div class="grid">
+    <article>
+        <header><strong>Disk Space</strong></header>
+        <progress value="{{ backend.storage.percent_used }}" max="100"></progress>
+        <div style="display: flex; justify-content: space-between;">
+            <small>{{ backend.storage.free|filesizeformat }} free</small>
+            <small><strong>{{ backend.storage.total|filesizeformat }} Total</strong></small>
+        </div>
+    </article>
+
+    <article>
+        <header><strong>Guide Data</strong></header>
+        <p>Status: <mark>{{ backend.guide.status }}</mark></p>
+        <small>{{ backend.guide.days }} days of data through {{ backend.guide.thru|naturalday }}</small> </article>
+
+    <article>
+        <header><strong>System Load</strong></header>
+        <h3>{{ backend.load }}</h3>
+        <small>1-minute average</small>
+    </article>
+</div>
+
+<div class="grid">
+    <section>
+        <h4>Tuners</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hostname</th>
+                    <th>Input</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tuner in backend.encoders %}
+                <tr>
+                    <td>{{ tuner.HostName }}</td>
+                    <td>{{ tuner.Inputs.0.DisplayName }}</td>
+                    <td>
+                        {% if tuner.State == 0 %}
+                            <span style="color: var(--pico-ins-color);">● Idle</span>
+                        {% else %}
+                            <span style="color: var(--pico-del-color);">● Recording</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 </div>
 {% endblock %}

@@ -109,11 +109,54 @@ def get_recent_recordings(limit=10):
 
 def dashboard(request):
     context = {"upcoming": [], "error": None}
+
+    # TODO: use Status/GetBackendStatus
+    # includes 10 next scheduled recordings
     try:
+        url = f"http://{MYTHTV_BACKEND_IP}:{MYTHTV_PORT}/Status/GetBackendStatus"
+        # Fetch detailed Backend Status
+        res = requests.get(url, headers={"Accept": "application/json"}, timeout=5)
+        data = res.json()
+        status = data.get("BackendStatus", {})
+        machine = status.get("MachineInfo", {})
+
+        # Extract 'total' storage group for summary
+        total_storage = next(
+            (
+                item
+                for item in machine.get("StorageGroups", [])
+                if item["Id"] == "total"
+            ),
+            {},
+        )
+
+        # Clean up data for the dashboard
+        backend_info = {
+            "load": machine.get("LoadAvg1"),
+            "guide": {
+                "status": machine.get("GuideStatus"),
+                "days": machine.get("GuideDays"),
+                "thru": datetime.fromisoformat(machine.get("GuideThru")),
+            },
+            "storage": {
+                "total": total_storage.get("Total") * 1024 * 1024,
+                "used": total_storage.get("Used") * 1024 * 1024,
+                "free": total_storage.get("Free") * 1024 * 1024,
+                "percent_used": total_storage.get("Used", 0)
+                / total_storage.get("Total", 1)
+                * 100,
+            },
+            "encoders": status.get("Encoders", []),
+        }
+
+        # TOOD: get upcoming from backend info
+        # 'upcoming': status.get('Scheduled', [])[:5],
         context["upcoming"] = get_upcoming_recordings(limit=3)
         context["recorded"] = get_recent_recordings(limit=3)
+        context["backend"] = backend_info
+
     except Exception as e:
-        context["error"] = f"Could not connect to MythTV: {e}"
+        context["error"] = f"Error connecting to MythTV: {e}"
 
     return render(request, "recordings/dashboard.html", context)
 
