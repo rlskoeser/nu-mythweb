@@ -16,12 +16,19 @@
     font-weight: 700;
 }
 
-/* recording status */
-.status-badge {
+mark {
     border-radius: 4px;
+}
+
+/* recording status */
+.status mark {
     padding: 2px 8px;
     font-size: 0.75rem;
     white-space: nowrap;
+    display: inline-block;
+}
+.status {
+    width: 5em;
 }
 
 .status-recording { background-color: var(--pico-ins-color); }
@@ -102,6 +109,7 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
     td.status {
         grid-area: status;
         text-align: right;
+        width: auto;
     }
 
     td.program-info {

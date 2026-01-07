@@ -6,7 +6,7 @@
 {% block content %}
     <hgroup>
         <h2>Upcoming Recordings</h2>
-        <p>Currently scheduled recordings.</p>
+        <p>{{ programs|length }} recording{{ programs|length|pluralize }} scheduled</p>
     </hgroup>
 
     {% if error %}
@@ -28,18 +28,20 @@
                 <tbody>
                     {% for prog in programs %}
                     {# display each unique date once #}
-                    {% ifchanged prog.dt_start.date %}
+                    {% with prog.dt_start|naturalday:"l, F j"|title as date_label %}
+                    {% ifchanged date_label %} {# update based on current timezone change, not UTC #}
                     {# Close previous body if not first, then open new one for a new day #}
                     {% if not forloop.first %}</tbody>{% endif %}
                     <thead>
                     <tr class="date-header">
                         <td colspan="4">
-                            {{ prog.dt_start|naturalday:"l, F j" }}
+                            {{ date_label }}
                         </td>
                     </tr>
                     </thead>
                     <tbody>
                     {% endifchanged %}
+                    {% endwith %}
 
                     <tr class="recording" data-category="{{ prog.category_code }}">
                         <td class="time">
@@ -47,7 +49,9 @@
                         </td>
                         <td class="program-info" >
                             <strong>{{ prog.Title }}</strong><br>
-                            <small>{{ prog.SubTitle|default:"" }}</small>
+                            <small>{% if prog.Season and prog.Episode %}
+                                {{ prog.Season }}x{{ prog.Episode }}. {% endif %}
+                                {{ prog.SubTitle|default:"" }}</small>
 
                             {% if prog.Description %}
                             <aside style="color: var(--pico-secondary); margin-top: 0.5rem; margin-bottom: 0; max-width: 600px;">
@@ -63,6 +67,9 @@
                         <td class="status">
                             <mark class="status-badge {{ prog.status_code_class }}">
                                  {{ prog.status_display }}
+                            </mark>
+                            <mark>
+                                {{ prog.Recording.EncoderName }}
                             </mark>
                         </td>
                     </tr>
