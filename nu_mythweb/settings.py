@@ -120,3 +120,7 @@ STATIC_ROOT = BASE_DIR / "static"
 STATICFILES_DIRS = [
     BASE_DIR / "sitemedia",
 ]
+
+# mythtv config
+MYTHTV_HOST = "192.168.2.115"
+MYTHTV_PORT = 6744

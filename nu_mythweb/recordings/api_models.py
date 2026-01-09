@@ -60,17 +60,29 @@ class MythProgram:
         class_fields = {f.name for f in fields(cls)}
 
         # Build a kwargs dict of data for the class
-        # get recording status
-        recording_data = data.get("Recording", {})
         init_kwargs = {
-            "status_display": split_camel_case(
-                recording_data.get("StatusName", "Unknown")
-            ),
-            "status_code_class": get_status_class(
-                int(recording_data.get("Status", 99))
-            ),
             "category_code": category_slug(data["Category"]),
         }
+        # get recording status - for programs in guide, is None
+        recording_data = data.get("Recording")
+        if recording_data:
+            init_kwargs.update(
+                {
+                    "status_display": split_camel_case(
+                        recording_data.get("StatusName", "Unknown")
+                    ),
+                    "status_code_class": get_status_class(
+                        int(recording_data.get("Status", 99))
+                    ),
+                }
+            )
+        else:
+            init_kwargs.update(
+                {
+                    "status_display": "Not Recording",
+                    "status_code_class": "not-recording",
+                }
+            )
         for key, val in data.items():
             key = key.lower()
             if key in class_fields:

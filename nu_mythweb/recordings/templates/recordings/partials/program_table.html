@@ -1,0 +1,21 @@
+ <figure>
+     <table class="striped upcoming-recordings">
+         <thead class="col-headers">
+             <tr>
+                 <th scope="col">Time</th>
+                 <th scope="col">Program</th>
+                 <th scope="col">Channel</th>
+                 <th scope="col">Status</th>
+             </tr>
+         </thead>
+         <tbody>
+             {% for prog in programs %}
+                {% include "recordings/partials/program_row.html" with prog=prog %}
+             {% empty %}
+             <tr>
+                 <td colspan="3">No recordings found.</td>
+             </tr>
+             {% endfor %}
+         </tbody>
+     </table>
+ </figure>

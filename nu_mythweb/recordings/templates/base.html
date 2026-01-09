@@ -21,6 +21,11 @@
     </nav>
 
     <main class="container">
+        {% block header %}{% endblock %}
+        {% block search %}
+           {% include "recordings/partials/guide_search_form.html" %}
+        {% endblock %}
+
         {% block content %}{% endblock %}
     </main>
 

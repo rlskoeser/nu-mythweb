@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block header %}
+    <hgroup>
+        <h1>Search Guide Data</h1>
+    </hgroup>
+{% endblock %}
+
+{% block content %}
+{% if query %}
+    <h3>Results for {{ search_filter.lower }} search on ”{{ query }}”</h3>
+    {% if results %}
+        {% include "recordings/partials/program_table.html" with programs=results %}
+    {% else %}
+        <p>No programs found matching that keyword in the next 7 days.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

@@ -127,3 +127,8 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
         grid-area: title;
     }
 }
+
+
+form.guide-search select[name='search-filter'] {
+    max-width: 15em;
+}

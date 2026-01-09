@@ -1,0 +1,14 @@
+<article>
+    <form role="search" class="guide-search" method="GET" action="{% url 'guide-search' %}">
+        <fieldset role="group">
+            <input name="q" type="search" placeholder="Search program guide data" value="{{ query }}">
+            <select name="search-filter" id="search-filter" aria-label="Search field" required>
+              <option {% if search_filter == 'Keyword' %}selected{% endif %}>Keyword</option>
+              <option {% if search_filter == 'Title' %}selected{% endif %}>Title</option>
+              <option {% if search_filter == 'Category' %}selected{% endif %}>Category</option>
+              <option {% if search_filter == 'Person' %}selected{% endif %}>Person</option>
+            </select>
+            <input type="submit" value="Search">
+        </fieldset>
+    </form>
+</article>

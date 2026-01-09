@@ -1,13 +1,15 @@
 {% extends "base.html" %}
-{% load humanize %}
 
-{% block title %}Upcoming - MythTV{% endblock %}
+{% block title %}Upcoming Recordings | MythTV{% endblock %}
 
-{% block content %}
+{% block header %}
     <hgroup>
-        <h2>Upcoming Recordings</h2>
+        <h1>Upcoming Recordings</h1>
         <p>{{ programs|length }} recording{{ programs|length|pluralize }} scheduled</p>
     </hgroup>
+{% endblock %}
+
+{% block content %}
 
     {% if error %}
         <article style="border-color: var(--pico-form-element-invalid-border-color);">
@@ -15,72 +17,6 @@
             {{ error }}
         </article>
     {% else %}
-        <figure>
-            <table class="striped upcoming-recordings">
-                <thead class="col-headers">
-                    <tr>
-                        <th scope="col">Time</th>
-                        <th scope="col">Program</th>
-                        <th scope="col">Channel</th>
-                        <th scope="col">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for prog in programs %}
-                    {# display each unique date once #}
-                    {% with prog.start_time|naturalday:"l, F j"|title as date_label %}
-                    {% ifchanged date_label %} {# update based on current timezone change, not UTC #}
-                    {# Close previous body if not first, then open new one for a new day #}
-                    {% if not forloop.first %}</tbody>{% endif %}
-                    <thead>
-                    <tr class="date-header">
-                        <td colspan="4">
-                            {{ date_label }}
-                        </td>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% endifchanged %}
-                    {% endwith %}
-
-                    <tr class="recording" data-category="{{ prog.category_code }}">
-                        <td class="time">
-                            <div class="time">{{ prog.start_time|date:"g:i A" }}</div>
-                            <div class="duration"><small>{{ prog.end_time|timeuntil:prog.start_time }}</small> </div> {# duration #}
-                        </td>
-                        <td class="program-info" >
-                            <strong>{{ prog.title }}</strong><br>
-                            <small>{% if prog.season and prog.episode %}
-                                {{ prog.season }}x{{ prog.episode }}. {% endif %}
-                                {{ prog.subtitle|default:"" }}</small>
-
-                            {% if prog.description %}
-                            <aside style="color: var(--pico-secondary); margin-top: 0.5rem; margin-bottom: 0; max-width: 600px;">
-                                <small>
-                                    {{ prog.description }}
-                                </small>
-                            </aside>
-                            {% endif %}
-                        </td>
-                        <td class="channel">
-                            <mark>{{ prog.channel.CallSign }}</mark>
-                        </td>
-                        <td class="status">
-                            <mark class="status-badge {{ prog.status_code_class }}">
-                                 {{ prog.status_display }}
-                            </mark>
-                            <mark>
-                                {{ prog.recording.EncoderName }}
-                            </mark>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3">No recordings found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </figure>
+        {% include "recordings/partials/program_table.html" with programs=programs %}
     {% endif %}
 {% endblock %}

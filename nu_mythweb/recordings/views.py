@@ -7,10 +7,6 @@ from django.shortcuts import render
 from nu_mythweb.recordings.api_models import MythProgram
 from nu_mythweb.recordings.mythtv_service import MythTVService
 
-# --- CONFIGURATION ---
-MYTHTV_BACKEND_IP = "192.168.2.115"
-MYTHTV_PORT = 6744
-
 
 def dashboard(request):
     context = {"upcoming": [], "error": None}
@@ -71,3 +67,18 @@ def upcoming_list(request):
         context["error"] = f"Could not connect to MythTV: {e}"
 
     return render(request, "recordings/upcoming.html", context)
+
+
+def guide_search(request):
+    query = request.GET.get("q", "")
+    filter = request.GET.get("search-filter", "keyword")
+    results = []
+
+    if query:
+        results = MythTVService().search_guide(query, filter)
+
+    return render(
+        request,
+        "recordings/guide_search.html",
+        {"results": results, "query": query, "search_filter": filter},
+    )

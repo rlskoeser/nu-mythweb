@@ -1,13 +1,14 @@
 from datetime import timedelta
 
 import requests
+from django.conf import settings
 from django.utils import timezone
 
 from nu_mythweb.recordings.api_models import MythProgram
 
 
 class MythTVService:
-    def __init__(self, host="192.168.2.115", port=6744):
+    def __init__(self, host=settings.MYTHTV_HOST, port=settings.MYTHTV_PORT):
         self.base_url = f"http://{host}:{port}"
         self.headers = {"Accept": "application/json"}
 
@@ -15,7 +16,9 @@ class MythTVService:
         """Internal helper for GET requests with error handling."""
         url = f"{self.base_url}/{endpoint}"
         try:
-            response = requests.get(url, params=params, headers=self.headers, timeout=5)
+            response = requests.get(
+                url, params=params, headers=self.headers, timeout=10
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException as e:
@@ -39,7 +42,7 @@ class MythTVService:
         ]
 
     def get_recent_recordings(self, limit=10):
-        params = {}
+        params = {"descending": True}
         if limit is not None:
             params["Count"] = limit
 
@@ -49,7 +52,7 @@ class MythTVService:
             for prog in data.get("ProgramList", {}).get("Programs", [])
         ]
 
-    def search_guide(self, keyword, days=7):
+    def search_guide(self, query, filter="Keyword", days=20):
         """Searches guide data for a specific keyword."""
         start_time = timezone.now()
         end_time = start_time + timedelta(days=days)
@@ -57,9 +60,14 @@ class MythTVService:
         params = {
             "StartTime": start_time.isoformat(),
             "EndTime": end_time.isoformat(),
-            "Keyword": keyword,
             "Details": "true",
+            "count": 100,
         }
+        if filter.lower() in ["title", "category", "person", "keyword"]:
+            # uppercase first letter in filter
+            params[f"{filter.title()}Filter"] = query
+        else:
+            raise ValueError(f"Invalid guide search filter: {filter}")
 
         data = self._get("Guide/GetProgramList", params=params)
         raw_programs = data.get("ProgramList", {}).get("Programs", [])
