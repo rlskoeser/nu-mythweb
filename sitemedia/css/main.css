@@ -27,8 +27,8 @@ mark {
     white-space: nowrap;
     display: inline-block;
 }
-.status {
-    width: 5em;
+td.status {
+    max-width: 6em;
 }
 
 .status-recording { background-color: var(--pico-ins-color); }
@@ -100,6 +100,17 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
     /* position elements using grid areas */
     td.time {
         grid-area: time;
+        width: 100%;
+    }
+    div.time  {
+        display: inline-block;
+        width: 50%;
+        text-align: left;
+    }
+    .duration {
+        display: inline-block;
+        width: 50%;
+        text-align: right;
     }
 
     td.channel {
@@ -109,7 +120,7 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
     td.status {
         grid-area: status;
         text-align: right;
-        width: auto;
+        max-width: auto;
     }
 
     td.program-info {

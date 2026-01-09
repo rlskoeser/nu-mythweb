@@ -28,7 +28,7 @@
                 <tbody>
                     {% for prog in programs %}
                     {# display each unique date once #}
-                    {% with prog.dt_start|naturalday:"l, F j"|title as date_label %}
+                    {% with prog.start_time|naturalday:"l, F j"|title as date_label %}
                     {% ifchanged date_label %} {# update based on current timezone change, not UTC #}
                     {# Close previous body if not first, then open new one for a new day #}
                     {% if not forloop.first %}</tbody>{% endif %}
@@ -45,31 +45,32 @@
 
                     <tr class="recording" data-category="{{ prog.category_code }}">
                         <td class="time">
-                            {{ prog.dt_start|date:"g:i A" }}
+                            <div class="time">{{ prog.start_time|date:"g:i A" }}</div>
+                            <div class="duration"><small>{{ prog.end_time|timeuntil:prog.start_time }}</small> </div> {# duration #}
                         </td>
                         <td class="program-info" >
-                            <strong>{{ prog.Title }}</strong><br>
-                            <small>{% if prog.Season and prog.Episode %}
-                                {{ prog.Season }}x{{ prog.Episode }}. {% endif %}
-                                {{ prog.SubTitle|default:"" }}</small>
+                            <strong>{{ prog.title }}</strong><br>
+                            <small>{% if prog.season and prog.episode %}
+                                {{ prog.season }}x{{ prog.episode }}. {% endif %}
+                                {{ prog.subtitle|default:"" }}</small>
 
-                            {% if prog.Description %}
+                            {% if prog.description %}
                             <aside style="color: var(--pico-secondary); margin-top: 0.5rem; margin-bottom: 0; max-width: 600px;">
                                 <small>
-                                    {{ prog.Description }}
+                                    {{ prog.description }}
                                 </small>
                             </aside>
                             {% endif %}
                         </td>
                         <td class="channel">
-                            <mark>{{ prog.Channel.CallSign }}</mark>
+                            <mark>{{ prog.channel.CallSign }}</mark>
                         </td>
                         <td class="status">
                             <mark class="status-badge {{ prog.status_code_class }}">
                                  {{ prog.status_display }}
                             </mark>
                             <mark>
-                                {{ prog.Recording.EncoderName }}
+                                {{ prog.recording.EncoderName }}
                             </mark>
                         </td>
                     </tr>

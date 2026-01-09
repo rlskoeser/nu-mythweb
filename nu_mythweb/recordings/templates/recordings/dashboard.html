@@ -16,10 +16,10 @@
             <header>⏰ Upcoming Recordings</header>
             {% for prog in upcoming %}
                 <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 0.5rem;">
-                    <strong>{{ prog.Title }}</strong> <br/>
-                    <small>{{ prog.SubTitle|default:"" }}<br/>
-                     {{ prog.dt_start|naturalday }} {{ prog.dt_start|date:"g:i A" }}<br/>
-                    {{ prog.dt_start|naturaltime }}</small>
+                    <strong>{{ prog.title }}</strong> <br/>
+                    <small>{{ prog.subtitle|default:"" }}<br/>
+                     {{ prog.start_time|naturalday }} {{ prog.start_time|date:"g:i A" }}<br/>
+                    {{ prog.start_time|naturaltime }}</small>
                 </div>
             {% empty %}
                 <p>No upcoming recordings.</p>
@@ -33,9 +33,10 @@
             <header>🎥 Last 3 Recordings</header>
             {% for prog in recorded %}
                 <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--pico-muted-border-color); padding-bottom: 0.5rem;">
-                    <strong>{{ prog.Title }}</strong> <br/>
-                    <small>{{ prog.SubTitle|default:"" }}<br/>
-                     {{ prog.dt_start|naturalday }} {{ prog.dt_start|date:"g:i A" }}</small>
+                    <strong>{{ prog.title }}</strong> <br/>
+                    <small>{{ prog.subtitle|default:"" }}<br/>
+                     {{ prog.start_time|naturalday }} {{ prog.start_time|date:"g:i A" }}<br/>
+                    {{ prog.start_time|naturaltime }}</small>
                 </div>
             {% empty %}
                 <p>No history found.</p>
