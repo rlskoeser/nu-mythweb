@@ -130,5 +130,24 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
 
 
 form.guide-search select[name='search-filter'] {
-    max-width: 15em;
+    max-width: 10em;
+}
+form.guide-search input[type='submit'] {
+    max-width: 10em;
+}
+
+/* for mobile, wrap the horizontal search form on multiple lines */
+@media (max-width: 600px) {
+
+    .guide-search [role="group"] {
+        flex-wrap: wrap;
+    }
+
+    .guide-search [role="group"] > * {
+        /* restore spacing & rounded corners removed in groups */
+        margin-bottom: var(--pico-spacing) !important;
+    }
+    .guide-search [role="group"] > input[type=search] {
+        border-radius: var(--pico-border-radius) !important;
+     }
 }
