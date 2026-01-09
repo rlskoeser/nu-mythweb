@@ -13,3 +13,6 @@ wheels/
 *.sqlite3
 # collected static files
 static/
+
+# environment variables
+.env

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-kw!67%qz1!=$!)-)4lrv8^j0rbf*y+pf*occ&i1ymg&xl#3^4q"
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-kw!67%qz1!=$!)-)4lrv8^j0rbf*y+pf*occ&i1ymg&xl#3^4q",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+print(os.getenv("DJANGO_DEBUG", "False"))
+print(os.getenv("DJANGO_DEBUG", "False") == "True")
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 
 
 # Application definition
@@ -121,6 +128,24 @@ STATICFILES_DIRS = [
     BASE_DIR / "sitemedia",
 ]
 
+# script name, for deploy at non-root url
+FORCE_SCRIPT_NAME = os.getenv("DJANGO_BASE_URL")
+
 # mythtv config
-MYTHTV_HOST = "192.168.2.115"
-MYTHTV_PORT = 6744
+MYTHTV_HOST = os.getenv("MYTHTV_BACKEND_IP", "127.0.0.1")
+MYTHTV_PORT = int(os.getenv("MYTHTV_BACKEND_PORT", 6544))
+
+
+# set environment variables
+# # .env.example
+# DEBUG=False
+# SECRET_KEY=
+# MYTHTV_BACKEND_IP=
+# MYTHTV_BACKEND_PORT=6544
+
+# apache env syntax
+# SetEnv MYTHTV_BACKEND_IP 192.168.1.100
+# SetEnv MYTHTV_BACKEND_PORT 6544
+# SetEnv DJANGO_SECRET_KEY your-super-secret-key
+# SetEnv DJANGO_ALLOWED_HOSTS 192.168.1.100,192.168.1.101
+# SetEnv DJANGO_BASE_URL /mythweb/
