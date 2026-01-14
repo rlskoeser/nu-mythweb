@@ -28,7 +28,7 @@ mark {
     display: inline-block;
 }
 td.status {
-    max-width: 6em;
+    max-width: 7em;
 }
 
 .status-recording { background-color: var(--pico-ins-color); }
@@ -128,6 +128,9 @@ tr.recording[data-category="sitcom"]::after { content: "📺"; } */
     }
 }
 
+form.guide-search {
+    flex-wrap: wrap;
+}
 
 form.guide-search select[name='search-filter'] {
     max-width: 10em;
@@ -136,8 +139,13 @@ form.guide-search input[type='submit'] {
     max-width: 10em;
 }
 
+form.guide-search summary {
+    display: inline-block;
+    width: auto;
+}
+
 /* for mobile, wrap the horizontal search form on multiple lines */
-@media (max-width: 600px) {
+@media (max-width: 756px) {
 
     .guide-search [role="group"] {
         flex-wrap: wrap;
@@ -150,4 +158,26 @@ form.guide-search input[type='submit'] {
     .guide-search [role="group"] > input[type=search] {
         border-radius: var(--pico-border-radius) !important;
      }
+}
+
+.record-control {
+    padding-top: 10px;
+    font-size: 0.85rem;
+}
+
+/* make buttons smaller in record program form */
+.record-control button, .record-control [role="button"], .recording [role="button"] {
+    padding: 2px 10px;    /* Default is usually ~0.75rem 1rem */
+    font-size: 0.85rem;
+    width: auto;          /* Ensure it doesn't try to fill the width */
+    margin-bottom: 0;     /* Remove default spacing if in a grid */
+}
+
+.htmx-indicator {
+    /* apply htmx styles at load time */
+    opacity: 0;
+    visibility: hidden;
+}
+.htmx-requesting .htmx-indicator {
+    /*display: inline-block;*/
 }

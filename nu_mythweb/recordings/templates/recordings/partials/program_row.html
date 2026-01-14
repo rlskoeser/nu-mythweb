@@ -36,16 +36,9 @@
          {% endif %}
      </td>
      <td class="channel">
-         <mark>{{ prog.channel.CallSign }}</mark>
+         <a role="button" class="secondary" href="{% url 'guide-search' %}?channel_id={{ prog.channel.ChanId }}">{{ prog.channel.CallSign }}</a>
      </td>
      <td class="status">
-         <mark class="status-badge {{ prog.status_code_class }}">
-              {{ prog.status_display }}
-         </mark>
-         {% if prog.recording.EncoderName %}
-         <mark>
-             {{ prog.recording.EncoderName }}
-         </mark>
-         {% endif %}
+         {% include "recordings/partials/program_record_status.html" with program=prog %}
      </td>
  </tr>

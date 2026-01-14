@@ -10,5 +10,20 @@
             </select>
             <input type="submit" value="Search">
         </fieldset>
+
+        <details>
+            <summary>Filters:</summary>
+             <fieldset role="group">
+            <input name="channel_id" type="text" placeholder="Filter by channel" value="{{ channel_id }}">
+
+                {# uncomment when supported #}
+                <!--
+            <label>
+                <input name="new-only" type="checkbox" role="switch" />
+                New programs only
+                </label> -->
+             </fieldset>
+        </details>
+
     </form>
 </article>

@@ -1,8 +1,8 @@
-import re
+import time
 from datetime import datetime
 
-import requests
 from django.shortcuts import render
+from django.views.decorators.http import require_POST
 
 from nu_mythweb.recordings.api_models import MythProgram
 from nu_mythweb.recordings.mythtv_service import MythTVService
@@ -71,14 +71,61 @@ def upcoming_list(request):
 
 def guide_search(request):
     query = request.GET.get("q", "")
-    filter = request.GET.get("search-filter", "keyword")
+    search_type = request.GET.get("search-filter", "keyword")
+    chan_id = request.GET.get("channel_id")
     results = []
 
-    if query:
-        results = MythTVService().search_guide(query, filter)
+    # don't allow empty searches; require either keyword or filter
+    if query or chan_id:
+        results = MythTVService().search_guide(query, search_type, channel_id=chan_id)
 
     return render(
         request,
         "recordings/guide_search.html",
-        {"results": results, "query": query, "search_filter": filter},
+        {
+            "results": results,
+            "query": query,
+            "search_filter": search_type,
+            "channel_id": chan_id,
+        },
+    )
+
+
+@require_POST
+def schedule_recording(request):
+    record_id = request.POST.get("record_id")  # available when existing rule
+    chan_id = request.POST.get("chan_id")
+    start_time = request.POST.get("start_time")
+    record_type = request.POST.get("record_type")
+    myth_api = MythTVService()
+    if record_type == "cancel" and record_id:
+        success = myth_api.remove_record_schedule(record_id)
+    else:
+        success = myth_api.update_record_schedule(
+            chan_id, start_time, record_type=record_type, record_id=record_id
+        )
+
+    # get updated program
+    time.sleep(0.3)  # program details are not refreshed immediately...
+    program = myth_api.get_program_details(chan_id, start_time)
+
+    if success:
+        # make sure program details has updated recording information
+        # TODO: should probably set a limit here...
+        while 1:
+            if (record_type == "cancel" and program.recording) or (
+                record_type != "cancel" and program.recording is None
+            ):
+                program = myth_api.get_program_details(chan_id, start_time)
+            else:
+                break
+
+    # re-render the record form portion of the recording status
+    return render(
+        request,
+        "recordings/partials/program_record_status.html",
+        {
+            "program": program,
+            "updated": success,
+        },
     )

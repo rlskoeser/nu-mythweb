@@ -10,10 +10,11 @@
 {% block content %}
 {% if query %}
     <h3>Results for {{ search_filter.lower }} search on ”{{ query }}”</h3>
-    {% if results %}
-        {% include "recordings/partials/program_table.html" with programs=results %}
-    {% else %}
-        <p>No programs found matching that search term.</p>
-    {% endif %}
+{% endif %}
+
+{% if results %}
+    {% include "recordings/partials/program_table.html" with programs=results %}
+{% else %}
+    <p>No programs found matching that search term.</p>
 {% endif %}
 {% endblock %}
