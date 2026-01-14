@@ -46,6 +46,8 @@ class MythProgram:
     description: str = ""
     start_time: datetime = None
     end_time: datetime = None
+    raw_start_time: str = ""
+    raw_end_time: str = ""
     status_display: str = ""
     status_code_class: str = ""
     category_code: str = ""
@@ -90,6 +92,8 @@ class MythProgram:
             elif key in ["starttime", "endtime"] and val:
                 key = key.replace("time", "_time")  # add _ between start/end and time
                 init_kwargs[key] = datetime.datetime.fromisoformat(val)
+                # store raw value for use in forms
+                init_kwargs[f"raw_{key}"] = val
 
         return cls(**init_kwargs)
 
