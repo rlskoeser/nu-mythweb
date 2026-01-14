@@ -32,6 +32,23 @@
              <small>
                  {{ prog.description }}
              </small>
+
+             {% if prog.cast.CastMembers %}
+             <details class="program-cast">
+                 <summary>Cast</summary>
+                 {% regroup prog.cast.CastMembers by TranslatedRole as cast_list %}
+                 <ul>
+                 {% for role in cast_list %}
+                     <li><b>{{ role.grouper }}:</b>
+                         {% for person in role.list %}
+                           {{ person.Name }}{% if not forloop.last %}, {% endif %} {# may have CharacterName #}
+                         {% endfor %}
+                     </li>
+                 {% endfor %}
+                 </ul>
+            {% endif %}
+
+             </details>
          </aside>
          {% endif %}
      </td>

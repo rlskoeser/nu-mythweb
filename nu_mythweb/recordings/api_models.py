@@ -55,6 +55,7 @@ class MythProgram:
     episode: int = None
     channel: dict = None
     recording: dict = None
+    cast: dict = None
 
     @classmethod
     def from_json(cls, data):

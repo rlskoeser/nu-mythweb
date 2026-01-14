@@ -139,7 +139,7 @@ form.guide-search input[type='submit'] {
     max-width: 10em;
 }
 
-form.guide-search summary {
+details summary {
     display: inline-block;
     width: auto;
 }
@@ -180,4 +180,12 @@ form.guide-search summary {
 }
 .htmx-requesting .htmx-indicator {
     /*display: inline-block;*/
+}
+
+details.program-cast {
+    font-size: 0.75rem;
+    padding-top: 10px;
+}
+details.program-cast ul, details.program-cast li {
+    padding: 0;
 }
