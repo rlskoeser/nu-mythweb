@@ -161,3 +161,14 @@ class MythTVService:
         result = self._post(endpoint, data=recording_rule)
         # returns an id for the added recording rule
         return result["uint"]
+
+    def get_channels(self, source_id=1):
+        params = {"SourceID": source_id, "OnlyVisible": True, "Details": False}
+        api_endpoint = "Channel/GetChannelInfoList"
+        try:
+            response = self._get(api_endpoint, params=params)
+            # returns a list of channel information
+            return response.get("ChannelInfoList", {}).get("ChannelInfos", [])
+        except Exception as err:
+            print(err)
+            return None

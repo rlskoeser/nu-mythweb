@@ -14,7 +14,30 @@
         <details>
             <summary>Filters:</summary>
              <fieldset role="group">
-            <input name="channel_id" type="text" placeholder="Filter by channel" value="{{ channel_id }}">
+            <!--<input name="channel_id" type="text" placeholder="Filter by channel" value="{{ channel_id }}">-->
+            <input name="channel_id" type="text" list="channel-list" placeholder="Filter by channel"
+                oninput="updateChannelName(this.value)">
+            <input type="text"
+                       id="channel-name"
+                       placeholder="Channel Name"
+                       readonly >
+            <script type="text"
+            {# json version of channel list #}
+            {{ CHANNELS_DICT|json_script:"channel-data" }}
+            <script type="text/javascript">
+                // Load the data once from the script tag
+                const channelLookup = JSON.parse(document.getElementById('channel-data').textContent);
+                const channel_display_el = document.getElementById('channel-name');
+                  function updateChannelName(val) {
+                    // Direct lookup: if val exists in dict, show it, otherwise clear it
+                    channel_display_el.value = channelLookup[val] || "";
+                }
+            </script>
+            <datalist id="channel-list">
+                {% for channel_id, channel_label in CHANNELS_DICT.items %}
+                    <option value="{{ channel_id }}">{{ channel_label }}</option>
+                {% endfor %}
+            </datalist>
 
                 {# uncomment when supported #}
                 <!--
