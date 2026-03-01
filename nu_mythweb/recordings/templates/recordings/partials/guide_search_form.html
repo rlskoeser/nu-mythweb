@@ -1,3 +1,4 @@
+{% load local_tags %}
 <article>
     <form role="search" class="guide-search" method="GET" action="{% url 'guide-search' %}">
         <fieldset role="group">
@@ -11,15 +12,19 @@
             <input type="submit" value="Search">
         </fieldset>
 
-        <details>
+        <details {% if channel_id %}open{% endif %}> {# open when a filter is applied #}
             <summary>Filters:</summary>
              <fieldset role="group">
-            <!--<input name="channel_id" type="text" placeholder="Filter by channel" value="{{ channel_id }}">-->
+            <!--<input name="channel_id" type="text" placeholder="Filter by channel" >-->
             <input name="channel_id" type="text" list="channel-list" placeholder="Filter by channel"
+                value="{{ channel_id }}"
                 oninput="updateChannelName(this.value)">
             <input type="text"
                        id="channel-name"
                        placeholder="Channel Name"
+                       {% if channel_id %}
+                       value="{{ CHANNELS_DICT|get_item:channel_id }}"
+                       {% endif %}
                        readonly >
             <script type="text"
             {# json version of channel list #}
