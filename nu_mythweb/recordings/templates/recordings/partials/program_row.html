@@ -22,7 +22,11 @@
          <div class="duration"><small>{{ prog.end_time|timeuntil:prog.start_time }}</small> </div> {# duration #}
      </td>
      <td class="program-info" >
-         <strong>{{ prog.title }}</strong><br>
+         <strong>{{ prog.title }}
+             {% if prog.air_date and prog.air_date|date:"Y" != prog.start_time|date:"Y" %}
+             <small>({{ prog.air_date|date:"Y" }})</small>
+             {% endif %}
+         </strong><br>
          <small>{% if prog.season and prog.episode %}
              {{ prog.season }}x{{ prog.episode }}. {% endif %}
              {{ prog.subtitle|default:"" }}</small>

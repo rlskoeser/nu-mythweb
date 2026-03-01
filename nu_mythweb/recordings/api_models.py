@@ -46,6 +46,7 @@ class MythProgram:
     description: str = ""
     start_time: datetime = None
     end_time: datetime = None
+    air_date: datetime = None
     raw_start_time: str = ""
     raw_end_time: str = ""
     status_display: str = ""
@@ -95,6 +96,8 @@ class MythProgram:
                 init_kwargs[key] = datetime.datetime.fromisoformat(val)
                 # store raw value for use in forms
                 init_kwargs[f"raw_{key}"] = val
+            elif key == "airdate" and val:
+                init_kwargs["air_date"] = datetime.date.fromisoformat(val)
 
         return cls(**init_kwargs)
 
