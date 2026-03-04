@@ -1,7 +1,7 @@
 <div class="record-control">
     {% with start_timestr=program.start_time|date:"Ymdhs" %}
     {% with loading_id="loading-"|add:program.channel.CallSign|add:"-"|add:start_timestr %}
-    <form hx-post="{% url 'manage-recording' %}" hx-swap="outerHTML" hx-indicator="#{{ loading_id }}">
+    <form hx-post="{% if program.recording.RecordedId %}{% url 'manage-recording' program.recording.RecordedId %}{% else %}{% url 'schedule-recording' %}{% endif %}" hx-swap="outerHTML" hx-indicator="#{{ loading_id }}">
         <p>
         <mark class="status-badge {{ program.status_code_class }}">
             {{ program.status_display }}
@@ -37,11 +37,11 @@
         {% elif program.status_display == "Recorded" and program.recording.RecordId %}
             {# if already deleted, offer undelete #}
             {% if program.recording.RecGroup == "Deleted" %}
-            <button type="submit" name="record_type" value="undelete" class="">
+            <button type="submit" name="action" value="undelete">
                 Undelete
             </button>
             {% else %}
-            <button type="submit" name="record_type" value="delete" class="delete error">
+            <button type="submit" name="action" value="delete" class="delete error">
                 Delete
             </button>
             {% endif %}

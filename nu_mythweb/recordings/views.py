@@ -102,21 +102,15 @@ def guide_search(request):
 
 
 @require_POST
-def manage_recording(request):
-    # schedule, cancel, delete
+def schedule_recording(request):
+    # schedule or cancel recording
     record_id = request.POST.get("record_id")  # available when existing rule
-    recorded_id = request.POST.get("recorded_id")  # available for recorded programs
     chan_id = request.POST.get("chan_id")
     start_time = request.POST.get("start_time")
     record_type = request.POST.get("record_type")
     myth_api = MythTVService()
     if record_type == "cancel" and record_id:
         success = myth_api.remove_record_schedule(record_id)
-    elif recorded_id:
-        if record_type == "delete":
-            success = myth_api.delete_recording(recorded_id)
-        elif record_type == "undelete":
-            success = myth_api.undelete_recording(recorded_id)
     else:
         success = myth_api.update_record_schedule(
             chan_id, start_time, record_type=record_type, record_id=record_id
@@ -124,10 +118,7 @@ def manage_recording(request):
 
     # get updated program
     time.sleep(0.3)  # program details are not refreshed immediately...
-    if record_type in ["delete", "undelete"]:
-        program = myth_api.get_recording_details(recorded_id)
-    else:
-        program = myth_api.get_program_details(chan_id, start_time)
+    program = myth_api.get_program_details(chan_id, start_time)
     # TODO: maybe split out schedule recording from manage (delete/undelete)
 
     if success:
@@ -139,12 +130,41 @@ def manage_recording(request):
                 record_type != "cancel" and program.recording is None
             ):
                 program = myth_api.get_program_details(chan_id, start_time)
+            else:
+                break
 
+    # re-render the record form portion of the recording status
+    return render(
+        request,
+        "recordings/partials/program_record_status.html",
+        {
+            "program": program,
+            "updated": success,
+        },
+    )
+
+
+@require_POST
+def manage_recording(request, recorded_id: int):
+    # delete or undelete
+    action = request.POST.get("action")
+    myth_api = MythTVService()
+    if action == "delete":
+        success = myth_api.delete_recording(recorded_id)
+    elif action == "undelete":
+        success = myth_api.undelete_recording(recorded_id)
+
+    # get updated program
+    time.sleep(0.1)  # program details are not refreshed immediately...
+    program = myth_api.get_recording_details(recorded_id)
+
+    if success:
+        # make sure program details has updated recording information
+        # TODO: should probably set a limit here...
+        while 1:
             # delete or undelete
-            elif (
-                record_type == "delete" and program.recording["RecGroup"] != "Deleted"
-            ) or (
-                record_type == "undelete" and program.recording["RecGroup"] == "Deleted"
+            if (action == "delete" and program.recording["RecGroup"] != "Deleted") or (
+                action == "undelete" and program.recording["RecGroup"] == "Deleted"
             ):
                 program = myth_api.get_recording_details(recorded_id)
             else:
