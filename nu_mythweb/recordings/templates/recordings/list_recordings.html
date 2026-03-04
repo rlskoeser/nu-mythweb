@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Recordings | MythTV{% endblock %}
+
+{% block header %}
+    <hgroup>
+        <h1>Recorded programs</h1>
+        <p>{{ recordings|length }} recording{{ recordings|length|pluralize }}</p>
+    </hgroup>
+{% endblock %}
+
+ {% block search %} {# suppress guide search for now; add search/filter recordings in future #}
+ {% endblock %}
+
+{% block content %}
+    {% if error %}
+        <article style="border-color: var(--pico-form-element-invalid-border-color);">
+            <header>Connection Error</header>
+            {{ error }}
+        </article>
+    {% else %}
+        {% include "recordings/partials/program_table.html" with programs=recordings %}
+    {% endif %}
+</main>
+{% endblock %}

@@ -30,6 +30,9 @@ def get_status_class(code):
     # 0: Recording, -2: Will Record
     if code in [0, -2]:
         return "status-recording"
+    # -3: Recorded (?)
+    elif code == -3:
+        return "status-recorded"
     # -3: Conflict, -5: Offline/Error
     elif code in [-3, -5]:
         return "status-conflict"
@@ -57,6 +60,7 @@ class MythProgram:
     channel: dict = None
     recording: dict = None
     cast: dict = None
+    filesize: int = None
 
     @classmethod
     def from_json(cls, data):

@@ -2,6 +2,7 @@ from datetime import timedelta
 
 import requests
 from django.conf import settings
+from django.core.cache import cache
 from django.utils import timezone
 
 from nu_mythweb.recordings.api_models import MythProgram
@@ -96,6 +97,12 @@ class MythTVService:
         program_data = data.get("Program", {})
         return MythProgram.from_json(program_data) if program_data else None
 
+    def get_recording_details(self, recorded_id):
+        """Fetch details for a recorded program."""
+        data = self._get("Dvr/GetRecorded", params={"RecordedId": recorded_id})
+        program_data = data.get("Program", {})
+        return MythProgram.from_json(program_data) if program_data else None
+
     def get_record_id(self, chan_id, start_time):
         """Get the recording rule for this showing and returns the ID."""
         params = {"ChanId": chan_id, "StartTime": start_time}
@@ -162,13 +169,40 @@ class MythTVService:
         # returns an id for the added recording rule
         return result["uint"]
 
+    def delete_recording(self, recorded_id, record_again=False, force=False):
+        # delete recording by recording id
+        endpoint = "Dvr/DeleteRecording"
+        data = {"RecordedId": recorded_id}
+        # force deletion (remove metadata when file cannot be found)
+        if force:
+            data["ForceDelete"] = True
+        # delete but allow rerecord
+        if record_again:
+            data["AllowRerecord"] = True
+        result = self._post(endpoint, data=data)
+        return result["bool"]
+
+    def undelete_recording(self, recorded_id):
+        # undelete recording by recording id
+        endpoint = "Dvr/UnDeleteRecording"
+        result = self._post(endpoint, data={"RecordedId": recorded_id})
+        return result["bool"]
+
     def get_channels(self, source_id=1):
-        params = {"SourceID": source_id, "OnlyVisible": True, "Details": False}
-        api_endpoint = "Channel/GetChannelInfoList"
-        try:
-            response = self._get(api_endpoint, params=params)
-            # returns a list of channel information
-            return response.get("ChannelInfoList", {}).get("ChannelInfos", [])
-        except Exception as err:
-            print(err)
-            return None
+        cache_key = "mythtv_channel_list"
+        channels = cache.get(cache_key)
+
+        if channels is None:
+            params = {"SourceID": source_id, "OnlyVisible": True, "Details": False}
+            api_endpoint = "Channel/GetChannelInfoList"
+            try:
+                response = self._get(api_endpoint, params=params)
+                # returns a list of channel information
+                channels = response.get("ChannelInfoList", {}).get("ChannelInfos", [])
+                # Store in cache for 86400 seconds (24 hours)
+                cache.set(cache_key, channels, 86400)
+            except Exception as err:
+                print(err)
+                return []
+
+        return channels

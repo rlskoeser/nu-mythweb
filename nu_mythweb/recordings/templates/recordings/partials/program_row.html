@@ -16,10 +16,14 @@
  {% endifchanged %}
  {% endwith %}
 
- <tr class="recording" data-category="{{ prog.category_code }}">
+ <tr class="recording" data-category="{{ prog.category_code }}"
+     {% if prog.recording.RecordId %}id="recording-{{ prog.recording.RecordId }}"{% endif %}>
      <td class="time">
          <div class="time">{{ prog.start_time|date:"g:i A" }}</div>
          <div class="duration"><small>{{ prog.end_time|timeuntil:prog.start_time }}</small> </div> {# duration #}
+         {% if prog.filesize %} {# file size for recorded programs #}
+         <div class="file_size"><small>{{ prog.filesize|filesizeformat }}</small></div> {# file size #}
+         {% endif %}
      </td>
      <td class="program-info" >
          <strong>{{ prog.title }}
@@ -57,7 +61,7 @@
          {% endif %}
      </td>
      <td class="channel">
-         <a role="button" class="secondary" href="{% url 'guide-search' %}?channel_id={{ prog.channel.ChanId }}">{{ prog.channel.CallSign }}</a>
+         <a role="button" class="secondary" href="{% url 'guide-search' %}?channel_id={{ prog.channel.ChanId }}">{{ prog.channel.CallSign|default:"-" }}</a>
      </td>
      <td class="status">
          {% include "recordings/partials/program_record_status.html" with program=prog %}

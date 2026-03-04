@@ -30,12 +30,15 @@ mark {
 td.status {
     max-width: 7em;
 }
-
-.status-recording { background-color: var(--pico-ins-color); }
+.status-recording, .status-recorded { background-color: var(--pico-ins-color) !important; }
 .status-conflict  { background-color: var(--pico-del-color); }
 .status-default   {
     background-color: var(--pico-secondary-background);
     color: var(--pico-color);
+}
+
+button.delete {
+    background-color: var(--pico-del-color);
 }
 
  td.time {
