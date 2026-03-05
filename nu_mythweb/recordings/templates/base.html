@@ -16,9 +16,9 @@
             <li><strong>MythTV</strong></li>
         </ul>
         <ul>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'upcoming' %}" class="secondary">Upcoming</a></li>
-            <li><a href="{% url 'list-recordings' %}" class="secondary">Recordings</a></li>
+            <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>Home</a></li>
+            <li><a href="{% url 'upcoming' %}" {% if request.resolver_match.url_name == 'upcoming' %}aria-current="page"{% endif %} >Upcoming</a></li>
+            <li><a href="{% url 'list-recordings' %}" {% if request.resolver_match.url_name == 'list-recordings' %}aria-current="page"{% endif %}>Recordings</a></li>
         </ul>
     </nav>
 

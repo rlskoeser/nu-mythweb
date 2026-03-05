@@ -192,3 +192,18 @@ details.program-cast {
 details.program-cast ul, details.program-cast li {
     padding: 0;
 }
+
+/* Highlight current page link in the Nav */
+nav a {
+    color: var(--pico-secondary);
+    text-underline-offset: 8px;
+}
+
+nav a[aria-current="page"] {
+  color: var(--pico-primary);
+  /*font-weight: bold;*/
+  text-decoration: underline;
+  /*border-bottom: 2px solid var(--pico-primary);
+  border-radius: 0; /* Keeps the underline flat */
+  pointer-events: none;
+}
