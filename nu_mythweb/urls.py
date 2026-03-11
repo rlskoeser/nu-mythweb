@@ -3,7 +3,9 @@ URL configuration for nu_mythweb project.
 """
 
 # from django.contrib import admin
+from django.conf import settings
 from django.urls import path
+from django.views.generic.base import RedirectView
 
 from nu_mythweb.recordings.views import (
     dashboard,
@@ -23,4 +25,7 @@ urlpatterns = [
         "recording/manage/<int:recorded_id>/", manage_recording, name="manage-recording"
     ),
     path("recordings/", recordings_list, name="list-recordings"),
+    path(
+        "favicon.ico", RedirectView.as_view(url=settings.STATIC_URL + "img/favicon.ico")
+    ),
 ]
