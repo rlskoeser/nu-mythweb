@@ -1,9 +1,8 @@
 import time
 from datetime import datetime
 
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.http import require_POST
 
 from nu_mythweb.recordings.api_models import MythProgram
 from nu_mythweb.recordings.mythtv_service import MythTVService
@@ -119,17 +118,19 @@ def schedule_recording(request):
     # get updated program
     time.sleep(0.3)  # program details are not refreshed immediately...
     program = myth_api.get_program_details(chan_id, start_time)
-    # TODO: maybe split out schedule recording from manage (delete/undelete)
 
     if success:
         # make sure program details has updated recording information
         # TODO: should probably set a limit here...
-        while 1:
+        retries = 0
+        while retries > 10:
             # scheduling or canceling schedule
-            if (record_type == "cancel" and program.recording) or (
+            if (record_type == "cancel" and hasattr(program, "recording")) or (
                 record_type != "cancel" and program.recording is None
             ):
                 program = myth_api.get_program_details(chan_id, start_time)
+                print("program.recording:", program.recording)
+                retries += 1
             else:
                 break
 
@@ -153,6 +154,10 @@ def manage_recording(request, recorded_id: int):
         success = myth_api.delete_recording(recorded_id)
     elif action == "undelete":
         success = myth_api.undelete_recording(recorded_id)
+    elif action == "stop":
+        success = myth_api.stop_recording(recorded_id)
+    else:
+        success = False
 
     # get updated program
     time.sleep(0.1)  # program details are not refreshed immediately...
@@ -160,13 +165,15 @@ def manage_recording(request, recorded_id: int):
 
     if success:
         # make sure program details has updated recording information
-        # TODO: should probably set a limit here...
-        while 1:
+        retries = 0
+        while retries > 10:
             # delete or undelete
             if (action == "delete" and program.recording["RecGroup"] != "Deleted") or (
-                action == "undelete" and program.recording["RecGroup"] == "Deleted"
+                (action == "undelete" and program.recording["RecGroup"] == "Deleted")
+                or (action == "stop" and program.recording["Status"] != "Recording")
             ):
                 program = myth_api.get_recording_details(recorded_id)
+                retries += 1
             else:
                 break
 

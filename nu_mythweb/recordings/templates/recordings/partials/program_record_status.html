@@ -11,7 +11,7 @@
                 {{  program.recording.RecGroup }}
             </mark>
         {% endif %}
-        {% if program.recording.EncoderName and program.status_display != "Recorded"%}
+        {% if program.recording.EncoderName and program.status_display != "Recorded" %}
         <mark>
             {{ prog.recording.EncoderName }}
         </mark>
@@ -28,9 +28,13 @@
         {# pass recorded id if set; only available for things that have already been recorded #}
         <input type="hidden" name="recorded_id" value="{{ program.recording.RecordedId }}">
 
-        {% if program.status_display == "Will Record" or program.status_display == "Recording" %}
+        {% if program.status_display == "Will Record"  %}
             <button type="submit" name="record_type" value="cancel" class="cancel">
                 Cancel
+            </button>
+        {% elif program.status_display == "Recording" %}
+            <button type="submit" name="record_type" value="stop" class="delete error">
+                Stop
             </button>
         {% elif program.status_display == "Previous Recording" %}
         {# currently nothing; maybe add forget old / record anyway #}
@@ -46,13 +50,20 @@
             </button>
             {% endif %}
         {% else %}
-            <div>Record:
+
+            <div>
+            <legend>Record:</legend>
+            <fieldset role="group">
                 <button type="submit" name="record_type" value="one">
                     One
+                </button>
+                <button type="submit" name="record_type" value="single" class="secondary">
+                    This
                 </button>
                 <button type="submit" name="record_type" value="all" class="contrast">
                     All
                 </button>
+            </fieldset>
             </div>
         {% endif %}
         <span id="{{ loading_id }}" class="htmx-indicator" aria-busy="true">Updating...</span>

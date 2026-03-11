@@ -152,6 +152,8 @@ class MythTVService:
         # update recording rule
         if record_type == "one":
             rec_type = "Record One"
+        elif record_type == "single":
+            rec_type = "Single Record"
         elif record_type == "all":
             rec_type = "Record All"
         else:
@@ -185,6 +187,12 @@ class MythTVService:
     def undelete_recording(self, recorded_id):
         # undelete recording by recording id
         endpoint = "Dvr/UnDeleteRecording"
+        result = self._post(endpoint, data={"RecordedId": recorded_id})
+        return result["bool"]
+
+    def stop_recording(self, recorded_id):
+        # stop recording by recording id (currently being recorded)
+        endpoint = "Dvr/StopRecording"
         result = self._post(endpoint, data={"RecordedId": recorded_id})
         return result["bool"]
 
