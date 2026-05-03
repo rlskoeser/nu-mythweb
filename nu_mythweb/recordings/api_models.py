@@ -55,6 +55,8 @@ class MythProgram:
     status_display: str = ""
     status_code_class: str = ""
     category_code: str = ""
+    category: str = ""
+    category_type: str = ""
     season: int = None
     episode: int = None
     channel: dict = None
@@ -102,6 +104,8 @@ class MythProgram:
                 init_kwargs[f"raw_{key}"] = val
             elif key == "airdate" and val:
                 init_kwargs["air_date"] = datetime.date.fromisoformat(val)
+            elif key == "cattype" and val:
+                init_kwargs["category_type"] = val
 
         return cls(**init_kwargs)
 

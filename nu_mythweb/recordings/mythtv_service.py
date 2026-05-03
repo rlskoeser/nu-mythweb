@@ -66,7 +66,9 @@ class MythTVService:
             for prog in data.get("ProgramList", {}).get("Programs", [])
         ]
 
-    def search_guide(self, query, filter="Keyword", channel_id=None, days=20):
+    def search_guide(
+        self, query, filter="Keyword", channel_id=None, days=20, new_only=False
+    ):
         """Searches guide data for a specific keyword."""
         start_time = timezone.now()
         end_time = start_time + timedelta(days=days)
@@ -74,8 +76,9 @@ class MythTVService:
         params = {
             "StartTime": start_time.isoformat(),
             "EndTime": end_time.isoformat(),
-            "Details": "true",
+            "Details": True,
             "count": 100,
+            "OnlyNew": new_only,
         }
         if query:
             if filter.lower() in ["title", "category", "person", "keyword"]:

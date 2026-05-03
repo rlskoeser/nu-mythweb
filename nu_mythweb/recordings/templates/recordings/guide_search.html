@@ -8,13 +8,13 @@
 {% endblock %}
 
 {% block content %}
-{% if query %}
-    <h3>Results for {{ search_filter.lower }} search on ”{{ query }}”</h3>
+{% if query or chan_id %}
+    <h3>{{ results|length }} result{{results|pluralize}}</h3>
 {% endif %}
 
 {% if results %}
     {% include "recordings/partials/program_table.html" with programs=results %}
 {% else %}
-    <p>No programs found matching that search term.</p>
+    <p>No matching programs found.</p>
 {% endif %}
 {% endblock %}

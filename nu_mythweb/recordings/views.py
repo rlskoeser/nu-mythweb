@@ -82,11 +82,14 @@ def guide_search(request):
     query = request.GET.get("q", "")
     search_type = request.GET.get("search-filter", "keyword")
     chan_id = request.GET.get("channel_id")
+    new_only = request.GET.get("new-only") == "on"
     results = []
 
     # don't allow empty searches; require either keyword or filter
     if query or chan_id:
-        results = MythTVService().search_guide(query, search_type, channel_id=chan_id)
+        results = MythTVService().search_guide(
+            query, search_type, channel_id=chan_id, new_only=new_only
+        )
 
     return render(
         request,
@@ -96,6 +99,7 @@ def guide_search(request):
             "query": query,
             "search_filter": search_type,
             "channel_id": chan_id,
+            "new_only": new_only,
         },
     )
 
