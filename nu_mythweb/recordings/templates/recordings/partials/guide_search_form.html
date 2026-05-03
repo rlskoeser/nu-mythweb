@@ -12,7 +12,7 @@
             <input type="submit" value="Search">
         </fieldset>
 
-        <details {% if channel_id or new_only %}open{% endif %}> {# open when a filter is applied #}
+        <details {% if channel_id or new_only or duration %}open{% endif %}> {# open when a filter is applied #}
             <summary>Filters:</summary>
              <fieldset role="group">
             <!--<input name="channel_id" type="text" placeholder="Filter by channel" >-->
@@ -44,12 +44,28 @@
                 {% endfor %}
             </datalist>
         </fieldset>
-                {# uncomment when supported #}
+        <div role="group">
 
+            {# filter by "new" in myth api #}
             <label>
                 <input name="new-only" type="checkbox" role="switch" {% if new_only %}checked{% endif %} />
                 New programs only
+            </label>
+
+            {# filter by duration #}
+            <fieldset class="duration">
+                <legend>Duration:</legend>
+                <label>
+                    <input type="radio" name="duration" value="1" {% if duration == 1 %}checked{% endif %}/> ≤1 hour
                 </label>
+                <label>
+                    <input type="radio" name="duration" value="2" {% if duration == 2 %}checked{% endif %}/> 2 hours
+                </label>
+                <label>
+                    <input type="radio" name="duration" value="3" {% if duration == 3 %}checked{% endif %}/> ≥ 3 hours
+                </label>
+            </fieldset>
+        </div>
 
         </details>
 

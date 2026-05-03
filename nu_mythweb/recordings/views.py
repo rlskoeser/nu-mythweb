@@ -35,9 +35,9 @@ def dashboard(request):
                 "thru": datetime.fromisoformat(machine.get("GuideThru")),
             },
             "storage": {
-                "total": total_storage.get("Total") * 1024 * 1024,
-                "used": total_storage.get("Used") * 1024 * 1024,
-                "free": total_storage.get("Free") * 1024 * 1024,
+                "total": total_storage.get("Total", 0) * 1024 * 1024,
+                "used": total_storage.get("Used", 0) * 1024 * 1024,
+                "free": total_storage.get("Free", 0) * 1024 * 1024,
                 "percent_used": total_storage.get("Used", 0)
                 / total_storage.get("Total", 1)
                 * 100,
@@ -72,9 +72,9 @@ def recordings_list(request):
     context = {"recordings": [], "error": None}
     try:
         recordings = MythTVService().get_recent_recordings(limit=1000)
+        context = {"recordings": recordings}
     except Exception as e:
         context["error"] = f"Could not connect to MythTV: {e}"
-    context = {"recordings": recordings}
     return render(request, "recordings/list_recordings.html", context)
 
 
@@ -83,12 +83,21 @@ def guide_search(request):
     search_type = request.GET.get("search-filter", "keyword")
     chan_id = request.GET.get("channel_id")
     new_only = request.GET.get("new-only") == "on"
+    # check for filter by duration
+    duration = request.GET.get("duration")
+    if duration is not None:
+        duration = int(duration)
+
     results = []
 
     # don't allow empty searches; require either keyword or filter
     if query or chan_id:
         results = MythTVService().search_guide(
-            query, search_type, channel_id=chan_id, new_only=new_only
+            query,
+            search_type,
+            channel_id=chan_id,
+            new_only=new_only,
+            duration=duration,
         )
 
     return render(
@@ -100,6 +109,7 @@ def guide_search(request):
             "search_filter": search_type,
             "channel_id": chan_id,
             "new_only": new_only,
+            "duration": duration,
         },
     )
 
@@ -133,7 +143,6 @@ def schedule_recording(request):
                 record_type != "cancel" and program.recording is None
             ):
                 program = myth_api.get_program_details(chan_id, start_time)
-                print("program.recording:", program.recording)
                 retries += 1
             else:
                 break

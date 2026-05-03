@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block content %}
-{% if query or chan_id %}
-    <h3>{{ results|length }} result{{results|pluralize}}</h3>
+{% if query or channel_id and results %}
+    <p>{{ results|length }} result{{results|pluralize}}</p>
 {% endif %}
 
 {% if results %}

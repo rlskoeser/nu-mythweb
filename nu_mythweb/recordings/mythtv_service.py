@@ -67,7 +67,13 @@ class MythTVService:
         ]
 
     def search_guide(
-        self, query, filter="Keyword", channel_id=None, days=20, new_only=False
+        self,
+        query,
+        filter="Keyword",
+        channel_id=None,
+        days=20,
+        new_only=False,
+        duration=None,
     ):
         """Searches guide data for a specific keyword."""
         start_time = timezone.now()
@@ -77,7 +83,7 @@ class MythTVService:
             "StartTime": start_time.isoformat(),
             "EndTime": end_time.isoformat(),
             "Details": True,
-            "count": 100,
+            "count": 350,
             "OnlyNew": new_only,
         }
         if query:
@@ -91,7 +97,36 @@ class MythTVService:
         data = self._get("Guide/GetProgramList", params=params)
         raw_programs = data.get("ProgramList", {}).get("Programs", [])
 
-        return [MythProgram.from_json(p) for p in raw_programs]
+        programs = [MythProgram.from_json(p) for p in raw_programs]
+
+        # optionally filter by duration
+        if duration != None:
+            min_delta = max_delta = None
+            if duration == 1:
+                # up to one hour
+                max_delta = timedelta(
+                    hours=duration, minutes=10
+                )  # give a slight cushion
+            elif duration == 2:
+                # around 2 hours (1 hour up to 2.5)
+                min_delta = timedelta(hours=1, minutes=10)
+                max_delta = timedelta(hours=2, minutes=30)
+                print(f"min delta {min_delta} max {max_delta}")
+            elif duration == 3:
+                # 3 hours or longer
+                min_delta = timedelta(hours=3)
+
+            total_before = len(programs)
+            programs = [
+                p
+                for p in programs
+                if (min_delta is None or p.duration >= min_delta)
+                and (max_delta is None or p.duration <= max_delta)
+            ]
+            total_after = len(programs)
+            print(f"{total_before} programs before filtering, now {total_after}")
+
+        return programs
 
     def get_program_details(self, chan_id, start_time):
         """Fetches specific details for a single program."""

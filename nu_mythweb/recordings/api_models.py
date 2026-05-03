@@ -1,6 +1,7 @@
 import datetime
 import re
 from dataclasses import dataclass, fields
+from typing import Optional
 
 
 def split_camel_case(text):
@@ -47,9 +48,9 @@ class MythProgram:
     title: str = ""
     subtitle: str = ""
     description: str = ""
-    start_time: datetime = None
-    end_time: datetime = None
-    air_date: datetime = None
+    start_time: Optional[datetime.datetime] = None
+    end_time: Optional[datetime.datetime] = None
+    air_date: Optional[datetime.datetime] = None
     raw_start_time: str = ""
     raw_end_time: str = ""
     status_display: str = ""
@@ -110,5 +111,6 @@ class MythProgram:
         return cls(**init_kwargs)
 
     @property
-    def duration(self) -> datetime.timedelta:
-        return self.end_time - self.start_time
+    def duration(self) -> datetime.timedelta | None:
+        if self.end_time and self.start_time:
+            return self.end_time - self.start_time
