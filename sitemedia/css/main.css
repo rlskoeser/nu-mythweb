@@ -12,7 +12,7 @@
 
 .date-header td {
     background-color: var(--pico-secondary-background);
-    color: var(--pico-primary);
+    color: var(--pico-primary-inverse);
     font-weight: 700;
 }
 
@@ -39,7 +39,7 @@ td.status {
 }
 .status-default {
     background-color: var(--pico-secondary-background);
-    color: var(--pico-color);
+    color: var(--pico-tooltip-color); /* works on both dark and light */
 }
 
 button.delete {
