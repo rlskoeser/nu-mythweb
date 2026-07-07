@@ -6,7 +6,7 @@
 /* make date header sticky when scrolling */
 .date-header {
     position: sticky;
-    top: 0;
+    top: -1px; /* adjust for sub-pixel gap */
     z-index: 10;
 }
 
@@ -225,4 +225,28 @@ nav a[aria-current="page"] {
     /*border-bottom: 2px solid var(--pico-primary);
   border-radius: 0; /* Keeps the underline flat */
     pointer-events: none;
+}
+
+div.table-snap {
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden;
+    scroll-snap-type: y proximity; /* Force snapping on the Y-axis */
+    max-height: 75vh;
+
+    /* Hide scrollbar for Chrome, Safari, Opera, and newer Edge */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for Firefox */
+    scrollbar-width: none;
+
+    /* Hide scrollbar for Legacy IE and Edge */
+    -ms-overflow-style: none;
+}
+
+.table-snap tr {
+    scroll-snap-align: start;
+}
+.table-snap tr:not(.date-header) {
+    scroll-margin-top: 50px;
 }

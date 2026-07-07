@@ -1,19 +1,19 @@
 <div class="record-control">
     {% with start_timestr=program.start_time|date:"Ymdhs" %}
     {% with loading_id="loading-"|add:program.channel.CallSign|add:"-"|add:start_timestr %}
-    <form hx-post="{% if program.recording.RecordedId %}{% url 'manage-recording' program.recording.RecordedId %}{% else %}{% url 'schedule-recording' %}{% endif %}" hx-swap="outerHTML" hx-indicator="#{{ loading_id }}">
+    <form hx-post="{% if program.recording.recordedid %}{% url 'manage-recording' program.recording.recordedid %}{% else %}{% url 'schedule-recording' %}{% endif %}" hx-swap="outerHTML" hx-indicator="#{{ loading_id }}">
         <p>
         <mark class="status-badge {{ program.status_code_class }}">
             {{ program.status_display }}
         </mark>
-        {% if program.status_display == "Recorded" and program.recording.RecGroup != "Default" %}
+        {% if program.status_display == "Recorded" and program.recording.recgroup != "Default" %}
             <mark> {# deleted #}
-                {{  program.recording.RecGroup }}
+                {{  program.recording.recgroup }}
             </mark>
         {% endif %}
-        {% if program.recording.EncoderName and program.status_display != "Recorded" %}
+        {% if program.recording.encodername and program.status_display != "Recorded" %}
         <mark>
-            {{ prog.recording.EncoderName }}
+            {{ prog.recording.encodername }}
         </mark>
         {% endif %}
         </p>
@@ -46,9 +46,9 @@
             </button>
         {% elif program.status_display == "Previous Recording" %}
         {# currently nothing; maybe add forget old / record anyway #}
-        {% elif program.status_display == "Recorded" and program.recording.recordid %}
+        {% elif program.status_display == "Recorded" and program.recording.recordedid %}
             {# if already deleted, offer undelete #}
-            {% if program.recording.RecGroup == "Deleted" %}
+            {% if program.recording.recgroup == "Deleted" %}
             <button type="submit" name="action" value="undelete">
                 Undelete
             </button>
@@ -58,7 +58,6 @@
             </button>
             {% endif %}
         {% else %}
-
             <div>
             <legend>Record:</legend>
             <fieldset role="group">
