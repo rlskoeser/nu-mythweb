@@ -31,8 +31,10 @@ td.status {
     max-width: 7em;
 }
 .status-recording,
-.status-recorded {
+.status-recorded,
+button.add {
     background-color: var(--pico-ins-color) !important;
+    color: var(--pico-tooltip-color);
 }
 .status-conflict {
     background-color: var(--pico-del-color);
@@ -44,6 +46,9 @@ td.status {
 
 button.delete {
     background-color: var(--pico-del-color);
+}
+button.add {
+    margin-top: 2px;
 }
 
 td.time {

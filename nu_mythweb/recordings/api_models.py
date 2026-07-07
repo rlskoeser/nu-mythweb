@@ -68,12 +68,12 @@ class MythProgram:
     @classmethod
     def from_json(cls, data):
         """Factory method to initialize from MythTV API response."""
-        class_fields = {f.name for f in fields(cls)}
 
         # Build a kwargs dict of data for the class
         init_kwargs = {
             "category_code": category_slug(data["Category"]),
         }
+        init_kwargs.update(cls.clean_values(data))
         # get recording status - for programs in guide, is None
         recording_data = data.get("Recording")
         if recording_data:
@@ -87,6 +87,7 @@ class MythProgram:
                     ),
                 }
             )
+            init_kwargs["recording"] = cls.clean_values(recording_data, all=True)
         else:
             init_kwargs.update(
                 {
@@ -94,21 +95,34 @@ class MythProgram:
                     "status_code_class": "not-recording",
                 }
             )
+
+        return cls(**init_kwargs)
+
+    @classmethod
+    def clean_values(cls, data: dict, all: bool = False) -> dict:
+        # clean up data values for conversion to myth program object
+        # by default, only includes class fields; use all=true for all
+        class_fields = {f.name for f in fields(cls)}
+        cleaned_data = {}
         for key, val in data.items():
             key = key.lower()
             if key in class_fields:
-                init_kwargs[key] = val
-            elif key in ["starttime", "endtime"] and val:
+                cleaned_data[key] = val
+            elif key in ["starttime", "endtime", "startts", "endts"] and val:
                 key = key.replace("time", "_time")  # add _ between start/end and time
-                init_kwargs[key] = datetime.datetime.fromisoformat(val)
+                key = key.replace("ts", "_time")  # same for recording timestamp
+                cleaned_data[key] = datetime.datetime.fromisoformat(val)
                 # store raw value for use in forms
-                init_kwargs[f"raw_{key}"] = val
+                cleaned_data[f"raw_{key}"] = val
             elif key == "airdate" and val:
-                init_kwargs["air_date"] = datetime.date.fromisoformat(val)
+                cleaned_data["air_date"] = datetime.date.fromisoformat(val)
             elif key == "cattype" and val:
-                init_kwargs["category_type"] = val
+                cleaned_data["category_type"] = val
+            else:
+                if all:  #  include all values when requested
+                    cleaned_data[key] = val
 
-        return cls(**init_kwargs)
+        return cleaned_data
 
     @property
     def duration(self) -> datetime.timedelta | None:

@@ -124,6 +124,8 @@ def schedule_recording(request):
     myth_api = MythTVService()
     if record_type == "cancel" and record_id:
         success = myth_api.remove_record_schedule(record_id)
+    elif record_type == "plus30" and record_id:
+        success = myth_api.extend_recording(record_id, 30)
     else:
         success = myth_api.update_record_schedule(
             chan_id, start_time, record_type=record_type, record_id=record_id
@@ -162,6 +164,7 @@ def schedule_recording(request):
 def manage_recording(request, recorded_id: int):
     # delete or undelete
     action = request.POST.get("action")
+    record_id = request.POST.get("record_id")
     myth_api = MythTVService()
     if action == "delete":
         success = myth_api.delete_recording(recorded_id)
@@ -169,6 +172,8 @@ def manage_recording(request, recorded_id: int):
         success = myth_api.undelete_recording(recorded_id)
     elif action == "stop":
         success = myth_api.stop_recording(recorded_id)
+    elif action == "plus30":
+        success = myth_api.extend_recording(record_id, 30)
     else:
         success = False
 
@@ -191,6 +196,7 @@ def manage_recording(request, recorded_id: int):
                 break
 
     # re-render the record form portion of the recording status
+    # TODO: doesn't seem to have complete context - missing status display
     return render(
         request,
         "recordings/partials/program_record_status.html",

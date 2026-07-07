@@ -37,6 +37,7 @@ class MythTVService:
             return response.json()
         except requests.RequestException as e:
             print(f"MythTV API Error ({endpoint}): {e}")
+
             return {}
 
     def get_backend_status(self):
@@ -195,7 +196,7 @@ class MythTVService:
         elif record_type == "all":
             rec_type = "Record All"
         else:
-            raise ValueError(f"Unsupported recording type `{record_type}`")
+            raise ValueError("Unsupported recording type", record_type)
 
         if recording_rule["Type"] == rec_type:
             print("recording type is already as desired")
@@ -220,6 +221,19 @@ class MythTVService:
         if record_again:
             data["AllowRerecord"] = True
         result = self._post(endpoint, data=data)
+        return result["bool"]
+
+    def extend_recording(self, record_id, amount=30):
+        # get the current recording rule
+        params = {"RecordId": record_id}
+        get_response = self._get("Dvr/GetRecordSchedule", params=params)
+        recording_rule = get_response["RecRule"]
+        # the rule comes with an "Id" field, but needs to be posted with RecordId
+        recording_rule["RecordId"] = record_id
+        # increase the end offset by the specified amount
+        recording_rule["EndOffset"] += amount
+        # post the updated rule
+        result = self._post("Dvr/UpdateRecordSchedule", data=recording_rule)
         return result["bool"]
 
     def undelete_recording(self, recorded_id):

@@ -17,10 +17,16 @@
  {% endwith %}
 
  <tr class="recording" data-category="{{ prog.category_code }}"
-     {% if prog.recording.RecordId %}id="recording-{{ prog.recording.RecordId }}"{% endif %}>
+     {% if prog.recording.RecordId %}id="recording-{{ prog.recording.recordid }}"{% endif %}>
      <td class="time">
          <div class="time">{{ prog.start_time|date:"g:i A" }}</div>
-         <div class="duration"><small>{{ prog.end_time|timeuntil:prog.start_time }}
+         {% with program_duration=prog.end_time|timeuntil:prog.start_time %}
+         <div class="duration"><small>{{ program_duration }}
+             {% if prog.recording and prog.recording.end_time !=  prog.end_time %}
+             {# display when extra time has been added #}
+             <br>+ {{ prog.recording.end_time|timeuntil:prog.end_time }}
+             {% endif %}
+         {% endwith %}
          <br>{{prog.category}} {{ prog.category_type }}
          </small> </div> {# duration #}
          {% if prog.filesize %} {# file size for recorded programs #}
