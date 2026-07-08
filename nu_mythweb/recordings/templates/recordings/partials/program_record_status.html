@@ -22,7 +22,7 @@
         {% csrf_token %}
         <input type="hidden" name="chan_id" value="{{ program.channel.ChanId }}"
             hx-indicator="#loading-{{ program.channel.ChanId }}">
-        <input type="hidden" name="start_time" value="{{ program.raw_start_tieme }}">
+        <input type="hidden" name="start_time" value="{{ program.raw_start_time }}">
         {# pass record id if set; only available for scheduled recordings #}
         <input type="hidden" name="record_id" value="{{ program.recording.recordid }}">
         {# pass recorded id if set; only available for things that have already been recorded #}
