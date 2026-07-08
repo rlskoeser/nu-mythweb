@@ -85,7 +85,7 @@ def guide_search(request):
     new_only = request.GET.get("new-only") == "on"
     # check for filter by duration
     duration = request.GET.get("duration")
-    if duration is not None:
+    if duration is not None and duration.strip():
         duration = int(duration)
 
     results = []
