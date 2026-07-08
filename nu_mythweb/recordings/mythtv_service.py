@@ -112,7 +112,7 @@ class MythTVService:
                 # around 2 hours (1 hour up to 2.5)
                 min_delta = timedelta(hours=1, minutes=10)
                 max_delta = timedelta(hours=2, minutes=30)
-                print(f"min delta {min_delta} max {max_delta}")
+                # print(f"min delta {min_delta} max {max_delta}")
             elif duration == 3:
                 # 3 hours or longer
                 min_delta = timedelta(hours=3)
